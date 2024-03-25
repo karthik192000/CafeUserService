@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders;
 public interface CafeUserService{
 
 
-    public String signUp(CreateUserRequest createUserRequest);
+    public String signUp(CreateUserRequest createUserRequest) throws IllegalAccessException;
 
     public TokenResponse login(LoginRequest loginRequest);
 

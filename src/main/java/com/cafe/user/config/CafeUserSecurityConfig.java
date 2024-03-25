@@ -1,5 +1,8 @@
 package com.cafe.user.config;
 
+import com.cafe.user.util.CustomAuthenticationManager;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +20,9 @@ public class CafeUserSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+
+    @Autowired
+    CustomAuthenticationManager customAuthenticationManager;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -42,6 +48,6 @@ public class CafeUserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+        return customAuthenticationManager;
     }
 }
