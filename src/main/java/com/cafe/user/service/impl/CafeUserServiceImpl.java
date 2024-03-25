@@ -1,9 +1,6 @@
 package com.cafe.user.service.impl;
 
-import com.cafe.user.beans.CreateUserRequest;
-import com.cafe.user.beans.LoginRequest;
-import com.cafe.user.beans.TokenResponse;
-import com.cafe.user.beans.TokenValidationResponse;
+import com.cafe.user.beans.*;
 import com.cafe.user.helper.Jwtutil;
 import com.cafe.user.model.CustomerDetails;
 import com.cafe.user.model.User;
@@ -49,14 +46,24 @@ public class CafeUserServiceImpl implements CafeUserService {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Override
-    public String signUp(CreateUserRequest createUserRequest) throws IllegalAccessException {
+    public SignUpResponse signUp(CreateUserRequest createUserRequest){
         User user = ModelDto.toModel(createUserRequest);
         User savedUser = userDetailsRepository.findByEmail(user.getEmail());
-        if(savedUser != null){
-            throw new IllegalAccessException("Username not available");
+        SignUpResponse signUpResponse = new SignUpResponse();
+
+        try {
+            if (savedUser != null) {
+                throw new IllegalArgumentException("User name not available");
+            }
+            savedUser = userDetailsRepository.save(user);
+            signUpResponse.setName(savedUser.getName());
+            signUpResponse.setUserName(savedUser.getEmail());
+            signUpResponse.setUserRole(savedUser.getUserrole());
         }
-        userDetailsRepository.save(user);
-        return "Sign-up successful";
+        catch (Exception ex){
+            throw ex;
+        }
+        return signUpResponse;
     }
 
     @Override

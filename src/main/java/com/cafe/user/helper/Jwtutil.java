@@ -57,7 +57,7 @@ public class Jwtutil {
     public User validateToken(String token) {
         User user = null;
         final String username = extractUsername(token);
-        if(!StringUtils.isEmpty(username)){
+        if(!StringUtils.isEmpty(username)) {
             user = userDetailsRepository.findByEmail(username);
         }
         return user;

@@ -17,6 +17,8 @@ public class CafeUserController {
 
     @Autowired
     CafeUserService cafeUserService;
+
+    @CrossOrigin
     @PostMapping(path = "/signup",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUp(@RequestBody CreateUserRequest createUserRequest){
         return new ResponseEntity<>(cafeUserService.signUp(createUserRequest), HttpStatus.CREATED);

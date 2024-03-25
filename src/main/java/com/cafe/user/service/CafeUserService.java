@@ -1,16 +1,13 @@
 package com.cafe.user.service;
 
-import com.cafe.user.beans.CreateUserRequest;
-import com.cafe.user.beans.LoginRequest;
-import com.cafe.user.beans.TokenResponse;
-import com.cafe.user.beans.TokenValidationResponse;
+import com.cafe.user.beans.*;
 import org.springframework.http.HttpHeaders;
 
 
 public interface CafeUserService{
 
 
-    public String signUp(CreateUserRequest createUserRequest) throws IllegalAccessException;
+    public SignUpResponse signUp(CreateUserRequest createUserRequest);
 
     public TokenResponse login(LoginRequest loginRequest);
 
