@@ -58,8 +58,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
                 return usernamePasswordAuthenticationToken;
             }
         }
+        catch (BadCredentialsException ex){
+            throw ex;
+        }
         catch (Exception ex){
-            ex.printStackTrace();
+            throw ex;
         }
 
         return null;
