@@ -9,6 +9,7 @@ import com.cafe.user.repository.UserDetailsRepository;
 import com.cafe.user.service.CafeUserService;
 import com.cafe.user.service.CustomUserDetailsService;
 import com.cafe.user.util.ModelDto;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -86,19 +87,27 @@ public class CafeUserServiceImpl implements CafeUserService {
     @Override
     public TokenValidationResponse validateToken(HttpHeaders httpHeaders) {
         TokenValidationResponse tokenValidationResponse= new TokenValidationResponse();
-        String status = "INVALID";
-        User user = null;
-        if(httpHeaders != null){
-            List<String> headerList = httpHeaders.get("authtoken");
-            if(!CollectionUtils.isEmpty(headerList)){
-                String authToken = headerList.get(0);
-                user = jwtutil.validateToken(authToken);
-                if(user != null){
-                    tokenValidationResponse.setUserName(user.getEmail());
-                    tokenValidationResponse.setRole(user.getUserrole());
-                    tokenValidationResponse.setStatus("VALID");
+        try {
+            String status = "INVALID";
+            User user = null;
+            if (httpHeaders != null) {
+                List<String> headerList = httpHeaders.get("authtoken");
+                if (!CollectionUtils.isEmpty(headerList)) {
+                    String authToken = headerList.get(0);
+                    user = jwtutil.validateToken(authToken);
+                    if (user != null) {
+                        tokenValidationResponse.setUserName(user.getEmail());
+                        tokenValidationResponse.setRole(user.getUserrole());
+                        tokenValidationResponse.setStatus("VALID");
+                    }
                 }
             }
+        }
+        catch (ExpiredJwtException ex){
+            tokenValidationResponse.setStatus("EXPIRED");
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
         }
         return  tokenValidationResponse;
     }

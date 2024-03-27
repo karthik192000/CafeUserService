@@ -31,6 +31,7 @@ public class CafeUserController {
         return new ResponseEntity<>(cafeUserService.login(loginRequest), HttpStatus.ACCEPTED);
     }
 
+    @CrossOrigin
     @PostMapping(path = "/validate",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> validateToken(@RequestHeader HttpHeaders httpHeaders){
         return new ResponseEntity<>(cafeUserService.validateToken(httpHeaders),HttpStatus.OK);
