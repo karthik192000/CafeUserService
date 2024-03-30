@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.sql.Date;
 import java.time.Instant;
@@ -80,7 +81,11 @@ public class CafeUserServiceImpl implements CafeUserService {
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
-        return new TokenResponse(jwtutil.generateToken(userDetails));
+        Set<SimpleGrantedAuthority> authoritySet = (Set<SimpleGrantedAuthority>)userDetails.getAuthorities();
+        SimpleGrantedAuthority authority =authoritySet.stream().findFirst().orElse(null);
+        String role = authority.getAuthority().split("_")[1];
+        String authtoken = jwtutil.generateToken(userDetails);
+        return new TokenResponse(userDetails.getUsername(),role,authtoken);
     }
 
 
