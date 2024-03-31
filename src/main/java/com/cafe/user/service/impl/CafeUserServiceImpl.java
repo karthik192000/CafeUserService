@@ -8,10 +8,12 @@ import com.cafe.user.repository.CustomerDetailsRepository;
 import com.cafe.user.repository.UserDetailsRepository;
 import com.cafe.user.service.CafeUserService;
 import com.cafe.user.service.CustomUserDetailsService;
+import com.cafe.user.util.CafeUserServiceException;
 import com.cafe.user.util.ModelDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,15 +57,18 @@ public class CafeUserServiceImpl implements CafeUserService {
 
         try {
             if (savedUser != null) {
-                throw new IllegalArgumentException("User name not available");
+                throw new CafeUserServiceException("Username not available",HttpStatus.NOT_ACCEPTABLE);
             }
             savedUser = userDetailsRepository.save(user);
             signUpResponse.setName(savedUser.getName());
             signUpResponse.setUserName(savedUser.getEmail());
             signUpResponse.setUserRole(savedUser.getUserrole());
         }
-        catch (Exception ex){
+        catch (CafeUserServiceException ex){
             throw ex;
+        }
+        catch (Exception ex){
+            throw new CafeUserServiceException("Exception occurred while saving user details.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return signUpResponse;
     }
@@ -77,7 +82,7 @@ public class CafeUserServiceImpl implements CafeUserService {
             this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),loginRequest.getPassword(),grantedAuthorities));
         }
         catch (BadCredentialsException ex){
-            throw ex;
+            throw new CafeUserServiceException("Invalid Credentials", HttpStatus.UNAUTHORIZED);
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
