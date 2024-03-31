@@ -7,6 +7,8 @@ import com.cafe.user.beans.ResponseBean;
 import com.cafe.user.beans.SignUpResponse;
 import com.cafe.user.beans.TokenResponse;
 import com.cafe.user.service.CafeUserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -47,6 +49,7 @@ public class CafeUserController {
     }
 
     @ApiOperation(value = "Validate Token", notes = "Validate Token",httpMethod = "POST")
+    @ApiImplicitParams(value = {@ApiImplicitParam(name = "authtoken",dataType = "String",paramType = "header",required = true)})
     @ApiResponses({
             @ApiResponse(code = 200,message = "Token Validation Successfull",response = TokenResponse.class),
             @ApiResponse(code= 500,message = "Exception occurred during token validation",response = ResponseBean.class)
