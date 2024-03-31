@@ -117,7 +117,7 @@ public class CafeUserServiceImpl implements CafeUserService {
             tokenValidationResponse.setStatus("EXPIRED");
         }
         catch (Exception ex){
-            ex.printStackTrace();
+            throw new CafeUserServiceException("Exception occurred during token validation",HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return  tokenValidationResponse;
     }
