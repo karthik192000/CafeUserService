@@ -24,7 +24,7 @@ public class Jwtutil {
 
 
     @Value("${token.expiry.ttl}")
-    private String tokenExpiryTTL;
+    private Long tokenExpiryTTL;
     @Autowired
     UserDetailsRepository userDetailsRepository;
     public String extractUsername(String token) {

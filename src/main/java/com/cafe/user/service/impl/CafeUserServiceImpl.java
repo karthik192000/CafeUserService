@@ -75,22 +75,28 @@ public class CafeUserServiceImpl implements CafeUserService {
 
     @Override
     public TokenResponse login(LoginRequest loginRequest) {
+        TokenResponse tokenResponse = null;
         try{
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + loginRequest.getRole());
             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
             grantedAuthorities.add(authority);
             this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),loginRequest.getPassword(),grantedAuthorities));
+
+
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
+        Set<SimpleGrantedAuthority> authoritySet = (Set<SimpleGrantedAuthority>)userDetails.getAuthorities();
+        SimpleGrantedAuthority savedAuthority =authoritySet.stream().findFirst().orElse(null);
+        String role = savedAuthority.getAuthority().split("_")[1];
+        String authtoken = jwtutil.generateToken(userDetails);
+        tokenResponse =    new TokenResponse(userDetails.getUsername(),role,authtoken);
         }
         catch (BadCredentialsException ex){
             throw new CafeUserServiceException("Invalid Credentials", HttpStatus.UNAUTHORIZED);
         }
-
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUserName());
-        Set<SimpleGrantedAuthority> authoritySet = (Set<SimpleGrantedAuthority>)userDetails.getAuthorities();
-        SimpleGrantedAuthority authority =authoritySet.stream().findFirst().orElse(null);
-        String role = authority.getAuthority().split("_")[1];
-        String authtoken = jwtutil.generateToken(userDetails);
-        return new TokenResponse(userDetails.getUsername(),role,authtoken);
+        catch (Exception ex){
+            throw new CafeUserServiceException("Exception occurred while loggin in user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return tokenResponse;
     }
 
 
